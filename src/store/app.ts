@@ -18,6 +18,6 @@ const appSlice = createSlice({
     }
 })
 
-export const tabActions = appSlice.actions;
+export const appActions = appSlice.actions;
 
 export default appSlice.reducer;

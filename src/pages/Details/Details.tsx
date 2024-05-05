@@ -4,15 +4,7 @@ import { MovieDBAPI } from '../../api/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import Loader from '../../components/Loader/Loader';
-
-export interface DetailsResponse {
-  backdrop_path: string,
-  name?: string,
-  title?: string,
-  tagline?: string,
-  overview: string,
-  video?: boolean
-}
+import { DetailsResponse, Genre } from '../../types/types';
 
 const Details = () => {
 
@@ -30,7 +22,7 @@ const Details = () => {
       })
     }
    
-  }, [id])
+  }, [category, id])
 
   const getImagePath = () => {
     if(data) return 'https://image.tmdb.org/t/p/original' + data.backdrop_path;
@@ -44,23 +36,31 @@ const Details = () => {
     <div className='details__container'>
       <span className='back' onClick={() => navigate('/')}>
         <b>&#8592;</b>
-        <p>Back</p>
+        <p>back</p>
       </span>
 
       {data ? (
         <>
           <div className='poster__container'>
-            <div className='poster' style={{backgroundImage: `url(${getImagePath()})`}}></div>
+            <div className='poster' style={
+              (data.poster_path ? { backgroundImage: `url(${getImagePath()})` } : { backgroundColor: '#212121' })
+            }></div>
+            
           </div>
 
-          <h1 className='detail__headline'>{data.name ? data.name : data.title}</h1>
+          <div className='headline__genres'>
+            <h1 className='detail__headline'>{data.name ? data.name : data.title}</h1>
+            <div className='genres__row'>
+              {data.genres.map((genre: Genre) => ( <span className='genre' key={genre.id}>{genre.name}</span> ))}
+            </div>
+          </div>
 
           {data.tagline ? <p className='detail__tagline'>{data.tagline}</p> : <></>}
 
           <p className='detail__overview'>{data.overview}</p>
         </>
       ) : (
-        <h3>Not found.</h3>
+        <h1 className='detail__not__found'>Not found.</h1>
       )}
 
 
