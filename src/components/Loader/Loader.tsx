@@ -1,13 +1,9 @@
 import React from 'react'
 
-type Props = {
-  className?: string
-}
-
-const Loader = (props: Props) => {
+const Loader = () => {
   return (
     <div className='loader__container'>
-       <span className={`loader ${props.className ? props.className : ''}`}></span>
+       <span className='loader'></span>
     </div>
   )
 }

@@ -31,6 +31,7 @@ export interface ListItem {
     name: string;
     key: string;
     poster_path: string;
+    backdrop_path: string,
     title: string;
 }
 

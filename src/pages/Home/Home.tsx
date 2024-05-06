@@ -4,72 +4,64 @@ import { appActions } from '../../store/app';
 import { RootState } from '../../store/index';
 
 import { MovieDBAPI } from '../../api/api';
-import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader/Loader';
-import Search from '../../components/Search/Search';
 import { ItemsList, ListItem } from '../../types/types';
+import Card from '../../components/Card/Card';
+import SearchBar from '../../components/SearchBar/SearchBar';
 
 const Home = () => {
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const currentTab = useSelector((state: RootState) => state.app.currentTab);
+  const searchQuery = useSelector((state: RootState) => state.app.searchQuery);
 
-  const [data, setData] = useState<ItemsList>();
+  const [data, setData] = useState<ItemsList | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  const dispatch = useDispatch();
 
   const setTab = (tab: string) => {
     dispatch(appActions.selectTab(tab));
   }
 
   const loadData = (category: string) => {
+    setData(null);
+    setIsLoading(true);
     MovieDBAPI.getByCategory(category).then((response) => {
       setData(response);
       setIsLoading(false);
     })
   }
 
-  const getImagePath = (poster_path: string) => {
-    return 'https://image.tmdb.org/t/p/w500/' + poster_path;
-  }
-
   useEffect(() => {
-    loadData(currentTab);
-  }, [currentTab])
-
+    if(searchQuery){
+      setIsLoading(true);
+      MovieDBAPI.search(currentTab, searchQuery).then((results) => {
+        setData(results);
+        setIsLoading(false);
+      })
+    } else {
+      loadData(currentTab);
+    }
+  }, [searchQuery, currentTab])
 
   return (
     <div className='home__container'>
       <div className='tabs__container'>
         <div className={`tab${currentTab === 'movie' ? ' active' : ''}`} onClick={() => setTab('movie')}>Movies</div>
-        <div className={`tab${currentTab === 'tv' ? ' active' : ''}`} onClick={() => setTab('tv')}>TV Shows</div>      
+        <div className={`tab${currentTab === 'tv' ? ' active' : ''}`} onClick={() => setTab('tv')}>TV Shows</div>
       </div>
-      
-      <Search />
+
+      <SearchBar />
 
       <div className='items__list'>
 
-        {isLoading ? (
-            <Loader/>
-          ) : (<></>)
-        }
+        {isLoading ? ( <Loader />) : (<></>) }
 
         {!data ? (
           <h3>No results.</h3>
-        ) : (
-          data.map((item: ListItem) => (
-            <div className='single__item' key={item.id} onClick={() => navigate('details/' + item.id)}>
-              <div className='cover__image__wrapper'>
-                <div className='cover__image' style={{backgroundImage: `url(${getImagePath(item.poster_path)})`}}></div>
-              </div>
-                
-              <h4>
-                {item.name ? item.name : item.title}
-              </h4>
-            </div>
-          ))
-        )}
+        ) :
+          data.map((item: ListItem) => <Card item={item} key={item.id} />)
+        }
       </div>
     </div>
   )
