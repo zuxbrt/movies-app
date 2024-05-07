@@ -1,7 +1,11 @@
-# movie-app
+# movies-app
 
 Application that displays Movies and TV Shows from TMDB (https://www.themoviedb.org/).
-Make sure that the REACT_APP_MOVIESDB_API_ACCESS_TOKEN is present in the .env file. (like in the .env.example)
+
+# Setup
+Create an .env file following the example .env.example.
+
+Without REACT_APP_MOVIESDB_API_ACCESS_TOKEN, application will not be able to communicate with the TMDB API.
 
 ## Available Scripts
 
@@ -15,11 +19,11 @@ Runs the ESLint analysis.
 
 ### `npm test`
 
-Launches the test runner (jest).
+Launches the test runner (jest). Only configured for testing with testing-library and jest - no actual tests written :(
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
+Builds the app for production to the `build` folder.
 
 ### `npm run eject`
 

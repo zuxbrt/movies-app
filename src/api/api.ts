@@ -1,5 +1,7 @@
 import { api } from './config'
 
+const IN_DEVELOPMENT = process.env.NODE_ENV === "development";
+
 export const MovieDBAPI = {
     getByCategory: async (category: string) => {
         try {
@@ -10,7 +12,8 @@ export const MovieDBAPI = {
                 return [];
             }
         } catch (error) {
-            console.error(error);
+            if(IN_DEVELOPMENT) console.error(error);
+            return null;
         }   
     },
 
@@ -23,7 +26,8 @@ export const MovieDBAPI = {
                 return [];
             }
         } catch (error) {
-            console.error(error);
+            if(IN_DEVELOPMENT) console.error(error);
+            return null;
         }  
     },
 
@@ -36,20 +40,22 @@ export const MovieDBAPI = {
                 return [];
             }
         } catch (error) {
-            console.error(error);
+            if(IN_DEVELOPMENT) console.error(error);
+            return null;
         }
     },
 
-    getVideo: async (category:string, id: string) => {
+    getVideoTrailers: async (category:string, id: string) => {
         try {
             const response = await api.get(`${category}/${id}/videos?language=en-US`);
             if(response.status === 200){
-                return response.data;
+                return response.data.results;
             } else {
                 return [];
             }
         } catch (error) {
-            console.error(error);
+            if(IN_DEVELOPMENT) console.error(error);
+            return null;
         }
     }
 }

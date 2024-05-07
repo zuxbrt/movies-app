@@ -26,6 +26,12 @@ export interface DetailsResponse {
     genres: Array<Genre>
 }
 
+export interface Trailer {
+    site: string
+    type: string
+    key: string
+}
+
 export interface ListItem {
     id: number;
     name: string;

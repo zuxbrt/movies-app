@@ -4,60 +4,81 @@ import { MovieDBAPI } from '../../api/api';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../store';
 import Loader from '../../components/Loader/Loader';
-import { DetailsResponse, Genre } from '../../types/types';
+import { DetailsResponse, Genre, Trailer } from '../../types/types';
 
 const Details = () => {
 
-  const {id} = useParams();
+  const { id } = useParams();
   const category = useSelector((state: RootState) => state.app.currentTab);
   const navigate = useNavigate();
-  const [data, setData] = useState<DetailsResponse>();
+  const [details, setDetails] = useState<DetailsResponse>();
+  const [trailer, setTrailer] = useState<Trailer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if(id){
+    if (id) {
       MovieDBAPI.details(category, id).then((response) => {
-        setData(response);
-        setIsLoading(false);
+        setDetails(response);
+        MovieDBAPI.getVideoTrailers(category, id).then((trailers) => {
+          if (trailers.length) {
+            setTrailer(trailers[0]);
+          }
+          setIsLoading(false);
+        })
       })
     }
-   
   }, [category, id])
 
   const getImagePath = () => {
-    if(data) return 'https://image.tmdb.org/t/p/original' + data.backdrop_path;
+    if (details) return 'https://image.tmdb.org/t/p/original' + details.backdrop_path;
   }
 
-  if(isLoading){
-    return <Loader/>
+  if (isLoading) {
+    return <Loader />
   }
 
   return (
     <div className='details__container'>
       <span className='back' onClick={() => navigate('/')}>
-        <b>&#8592;</b>
-        <p>back</p>
+        <p>Back</p>
       </span>
 
-      {data ? (
+      {details ? (
         <>
-          <div className='poster__container'>
-            <div className='poster' style={
-              (data.poster_path ? { backgroundImage: `url(${getImagePath()})` } : { backgroundColor: '#212121' })
-            }></div>
-            
-          </div>
+
+          {trailer
+            ?
+            <div className="trailer">
+              <iframe
+                width="853"
+                height="480"
+                src={`https://www.youtube.com/embed/${trailer.key}`}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Trailer"
+              />
+            </div>
+            :
+            <div className='poster__container'>
+              <div className='poster' style={
+                (details.poster_path ? { backgroundImage: `url(${getImagePath()})` } : { backgroundColor: '#212121' })
+              }></div>
+            </div>
+          }
+
+
 
           <div className='headline__genres'>
-            <h1 className='detail__headline'>{data.name ? data.name : data.title}</h1>
+            <h1 className='detail__headline'>{details.name ? details.name : details.title}</h1>
             <div className='genres__row'>
-              {data.genres.map((genre: Genre) => ( <span className='genre' key={genre.id}>{genre.name}</span> ))}
+              {details.genres.map((genre: Genre) => (<span className='genre' key={genre.id}>{genre.name}</span>))}
             </div>
           </div>
 
-          {data.tagline ? <p className='detail__tagline'>{data.tagline}</p> : <></>}
+          {details.tagline ? <p className='detail__tagline'>{details.tagline}</p> : <></>}
 
-          <p className='detail__overview'>{data.overview}</p>
+          <p className='detail__overview'>{details.overview}</p>
         </>
       ) : (
         <h1 className='detail__not__found'>Not found.</h1>

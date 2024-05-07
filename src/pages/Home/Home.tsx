@@ -57,11 +57,13 @@ const Home = () => {
 
         {isLoading ? ( <Loader />) : (<></>) }
 
-        {!data ? (
-          <h3>No results.</h3>
-        ) :
+        {data ?
+          data.length > 0 ?
           data.map((item: ListItem) => <Card item={item} key={item.id} />)
-        }
+          : <h3 className='no__results'>
+            Sorry, we could not find any results containing <br/><strong><i><b>"{searchQuery}"</b></i></strong>.
+            </h3>
+        : <></>}
       </div>
     </div>
   )
