@@ -200,15 +200,13 @@ body {
 .cancel__search {
     display: block;
     position: absolute;
-    top: 32px;
-    right: 14px;
+    top: 50%;
+    right: 22px;
+    transform: translate(50%, -50%);
     font-size: 24px;
+    line-height: 24px;
     cursor: pointer;
     transition: all .3s ease;
-}
-
-.cancel__search:hover {
-    transform: scale(1.1);
 }
 
 .search__results {
