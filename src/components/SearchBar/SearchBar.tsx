@@ -22,7 +22,7 @@ const SearchBar = () => {
 
   useEffect(() => {
     if (debouncedSearch) {
-      if (debouncedSearch.length > 3) {
+      if (debouncedSearch.length >= 3) {
         dispatch(appActions.setSearchQuery(debouncedSearch));
       } else {
         dispatch(appActions.setSearchQuery(null));
